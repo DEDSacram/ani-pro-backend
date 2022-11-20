@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "5BxD6CjXoV/ZVwWkT65U7Bh3wEEL2P1aQ9Qd7ktTXepwtz2EJjOrZG++esfSyBEpqphSLQe43UdVGZq+5yPKXw==",
+  "success": true,
+  "projectFilePath": "/home/samos/Desktop/ani-pro-backend/ani-pro-backend.csproj",
+  "expectedPackageFiles": [
+    "/home/samos/.nuget/packages/microsoft.aspnetcore.app.ref/7.0.0/microsoft.aspnetcore.app.ref.7.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

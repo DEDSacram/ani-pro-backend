@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/ani-pro-backend.props" />
+</Project>
