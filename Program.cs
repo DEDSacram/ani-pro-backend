@@ -123,7 +123,7 @@ public static Postres Encipher(string input, int key)
 {
 	
     string output = string.Empty;
-	int[][][] ani = new int[input.Length][][];
+	int[][][][] ani = new int[input.Length][][][];
 	for(int i = 0; i < input.Length; i++){
 		char ch = input[i];
 		char d =  char.IsUpper(ch) ? 'A' : 'a';
@@ -131,7 +131,7 @@ public static Postres Encipher(string input, int key)
 		output += Caesar(input[i], key, d);
 		int[] from = new int[2] {(((ch) - d) % 26),0};
 		int[] to = new int[2]{ ((((ch + key) - d) % 26)),0};
-		ani[i] = new int[][] {from,to};
+		ani[i] = new int[][][] {new int[][]{from,to}};
 	}
     return new Postres(input,output,ani);
 }
