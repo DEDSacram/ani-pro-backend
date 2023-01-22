@@ -17,10 +17,6 @@ var app = builder.Build();
 app.UseCors("usecors");
 
 
-
-// Console.WriteLine(CaesarCipher.Encipher("ABCDEEEE", 4).Ani[0][1][0]);
-
-
 app.MapGet("/", () => "Hello World!");
 app.MapPost("/encrypt", async delegate (HttpContext context)
 {
@@ -53,8 +49,6 @@ app.MapPost("/encrypt", async delegate (HttpContext context)
 		res.Cipher = data?.Cipher;
 		
  		return JsonSerializer.Serialize(res);
-		
-       
     }
 });
 app.MapPost("/decrypt", async delegate (HttpContext context)
@@ -105,14 +99,6 @@ public static string Decipher(string input, int key)
 }
 }
 
-
-
-
-
-
-
-
-
 public class CaesarCipher{
 static char Caesar(char ch, int key, char d)
 {
@@ -142,37 +128,6 @@ public static Postres Decipher(string input, int key)
 }
 
 }
-
-
-
-// public class CaesarCipher{
-
-// static char Caesar(char ch, int key)
-// {
-//     if (!char.IsLetter(ch))
-//     {
-//         return ch;
-//     }
-//     char d = char.IsUpper(ch) ? 'A' : 'a';
-//     return (char)((((ch + key) - d) % 26) + d);
-// }
-
-// public static string Encipher(string input, int key)
-// {
-//     string output = string.Empty;
-//     foreach (char ch in input)
-//         output += Caesar(ch, key);
-//     return output;
-// }
-
-// public static string Decipher(string input, int key)
-// {
-//     return Encipher(input, 26 - key);
-// }
-
-// }
-
-
 
 public class PlayfairCipher{
 
@@ -239,7 +194,6 @@ private static void GetPosition(ref char[,] keySquare, char ch, ref int row, ref
 				col = j;
 			}
 }
-
 private static char[] SameRow(ref char[,] keySquare, int row, int col1, int col2, int encipher)
 {
 	return new char[] { keySquare[row, Mod((col1 + encipher), 5)], keySquare[row, Mod((col2 + encipher), 5)] };
@@ -274,7 +228,6 @@ private static string RemoveOtherChars(string input)
 private static string AdjustOutput(string input, string output)
 {
 	StringBuilder retVal = new StringBuilder(output);
-
 	for (int i = 0; i < input.Length; ++i)
 	{
 		if (!char.IsLetter(input[i]))
@@ -283,53 +236,33 @@ private static string AdjustOutput(string input, string output)
 		if (char.IsLower(input[i]))
 			retVal[i] = char.ToLower(retVal[i]);
 	}
-
 	return retVal.ToString();
 }
 
 private static Postres Cipher(string input, string key, bool encipher)
 {
 	string retVal = string.Empty;
-
 	char[,] keySquare = GenerateKeySquare(key);
-
-	
-
 	string tempInput = RemoveOtherChars(input);
-
-	//animation
 	int[][][][] ani = new int[(tempInput.Length % 2 == 0) ? tempInput.Length/2 : (tempInput.Length+1)/2][][][];
-	// int[][][] ani = new int[(tempInput.Length % 2 == 0) ? tempInput.Length/2 : (tempInput.Length+1)/2][][];
 	char[][] square = new char[5][];
-	//
-
 	for(int i = 0; i<keySquare.GetLength(0);i++){
 		square[i] = new char[5] {keySquare[i,0],keySquare[i,1],keySquare[i,2],keySquare[i,3],keySquare[i,4]};
 	}
 
 	int e = encipher ? 1 : -1;
-
 	if ((tempInput.Length % 2) != 0)
 		tempInput += "X";
-
 	for (int i = 0; i < tempInput.Length; i += 2)
 	{
-
-
 		int row1 = 0;
 		int col1 = 0;
 		int row2 = 0;
 		int col2 = 0;
-		//from
 		int[] point3 = new int[2];
-		//into
 		int[] point1 = new int[2]; 
-		//from
 		int[] point4 = new int[2];
-		//into
 		int[] point2 = new int[2];
-	
-
 		GetPosition(ref keySquare, char.ToUpper(tempInput[i]), ref row1, ref col1);
 		point3[0] = row1;
 		point3[1] = col1;
@@ -371,13 +304,7 @@ private static Postres Cipher(string input, string key, bool encipher)
 		int[] to1 =  new int[2] {point1[0],point1[1]};
 		int[] from2 = new int[2] {point4[0],point4[1]};
 		int[] to2 =  new int[2] {point2[0],point2[1]};
-
-		// dynamic combine = new int[2][][]{new int[][]{from1,to1},new int[2][]{from2,to2}};
-
-	
 		ani[Convert.ToInt32(i/2)] = new int[][][]{new int[][]{from1,to1},new int[][]{from2,to2}};
-		// ani[Convert.ToInt32(i/2)] = new int[][] {from,to};
-
 	}
 
 	retVal = AdjustOutput(input, retVal);
@@ -398,99 +325,6 @@ public static Postres Decipher(string input, string key)
 }
 
 }
-
-
-
-
-// private static void GetPosition(ref char[,] keySquare, char ch, ref int row, ref int col)
-// {
-// 	if (ch == 'J')
-// 		GetPosition(ref keySquare, 'I', ref row, ref col);
-
-// 	for (int i = 0; i < 5; ++i)
-// 		for (int j = 0; j < 5; ++j)
-// 			if (keySquare[i, j] == ch)
-// 			{
-// 				row = i;
-// 				col = j;
-// 			}
-// }
-
-// private static char[] SameRow(ref char[,] keySquare, int row, int col1, int col2, int encipher)
-// {
-// 	return new char[] { keySquare[row, Mod((col1 + encipher), 5)], keySquare[row, Mod((col2 + encipher), 5)] };
-// }
-
-// private static char[] SameColumn(ref char[,] keySquare, int col, int row1, int row2, int encipher)
-// {
-// 	return new char[] { keySquare[Mod((row1 + encipher), 5), col], keySquare[Mod((row2 + encipher), 5), col] };
-// }
-
-// private static char[] SameRowColumn(ref char[,] keySquare, int row, int col, int encipher)
-// {
-// 	return new char[] { keySquare[Mod((row + encipher), 5), Mod((col + encipher), 5)], keySquare[Mod((row + encipher), 5), Mod((col + encipher), 5)] };
-// }
-
-// private static char[] DifferentRowColumn(ref char[,] keySquare, int row1, int col1, int row2, int col2)
-// {
-// 	return new char[] { keySquare[row1, col2], keySquare[row2, col1] };
-// }
-
-// private static string RemoveOtherChars(string input)
-// {
-// 	string output = input;
-
-// 	for (int i = 0; i < output.Length; ++i)
-// 		if (!char.IsLetter(output[i]))
-// 			output = output.Remove(i, 1);int[][][] ani = new int[input.Length][][];
-// 			retVal[i] = char.ToLower(retVal[i]);
-// 	}
-
-// 	return retVal.ToString();
-// }
-
-// private static string Cipher(string input, string key, bool encipher)
-// {
-// 	string retVal = string.Empty;
-// 	char[,] keySquare = GenerateKeySquare(key);
-// 	string tempInput = RemoveOtherChars(input);
-// 	int e = encipher ? 1 : -1;
-
-// 	if ((tempInput.Length % 2) != 0)
-// 		tempInput += "X";
-
-// 	for (int i = 0; i < tempID
-// 		else if (row1 == row2)
-// 		{
-// 			retVal += new string(SameRow(ref keySquare, row1, col1, col2, e));
-// 		}
-// 		else if(col1 == col2)
-// 		{
-// 			retVal += new string(SameColumn(ref keySquare, col1, row1, row2, e));
-// 		}
-// 		else
-// 		{
-// 			retVal += new string(DifferentRowColumn(ref keySquare, row1, col1, row2, col2));
-// 		}
-// 	}
-
-// 	retVal = AdjustOutput(input, retVal);
-
-// 	return retVal;
-// }
-
-// public static string Encipher(string input, string key)
-// {
-// 	return Cipher(input, key, true);
-// }
-
-// public static string Decipher(string input, string key)
-// {
-// 	return Cipher(input, key, false);
-// }
-
-// }
-
 public class Postreq
 {
     public string Cipher { get; set; }
