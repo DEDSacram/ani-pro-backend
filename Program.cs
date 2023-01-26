@@ -264,7 +264,6 @@ private static Postres Cipher(string input, string key, bool encipher)
 		fix[i] = tempInput[i];
 	}
 	tempInput = new string(fix);
-	Console.WriteLine(tempInput);
 	for (int i = 0; i < tempInput.Length; i += 2)
 	{
 		int row1 = 0;
