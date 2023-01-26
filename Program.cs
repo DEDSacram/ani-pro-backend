@@ -253,6 +253,18 @@ private static Postres Cipher(string input, string key, bool encipher)
 	int e = encipher ? 1 : -1;
 	if ((tempInput.Length % 2) != 0)
 		tempInput += "X";
+
+	char[] fix = new char[tempInput.Length];
+	fix = tempInput.ToCharArray();
+	for(int i = 1; i < tempInput.Length;i+=2){
+		if(tempInput[i-1] == tempInput[i]){
+			fix[i] = 'X';
+			continue;
+		}
+		fix[i] = tempInput[i];
+	}
+	tempInput = new string(fix);
+	Console.WriteLine(tempInput);
 	for (int i = 0; i < tempInput.Length; i += 2)
 	{
 		int row1 = 0;
@@ -309,7 +321,7 @@ private static Postres Cipher(string input, string key, bool encipher)
 
 	retVal = AdjustOutput(input, retVal);
 
-	Postres res = new Postres(input,retVal,ani);
+	Postres res = new Postres(tempInput,retVal,ani);
 	res.Display = square;
 	return res;
 }
