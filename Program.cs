@@ -1,5 +1,9 @@
+using System;
 using System.Text;
 using System.Text.Json;
+using System.Collections;
+using System.Collections.Generic;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -42,6 +46,11 @@ app.MapPost("/encrypt", async delegate (HttpContext context)
             case 3:
                 res = PlayfairCipher.Encipher(data.Text, data.Key);
                 break;
+			case 4:
+				string format = HomoCipher.RemoveSpecialCharacters((data.Text).ToLower());
+				dynamic k = HomoCipher.CreateKey(format);
+				res = HomoCipher.Encipher(format, k);
+				break;
             default:
                 //
                 break;
@@ -51,6 +60,13 @@ app.MapPost("/encrypt", async delegate (HttpContext context)
  		return JsonSerializer.Serialize(res);
     }
 });
+
+// string text = "Lakoma Lokomotiva.";
+// string ready = Homo.RemoveSpecialCharacters(text.ToLower());
+// dynamic k = Homo.CreateKey(ready);
+// string encrypted = Homo.Encipher(k,ready);
+// string decrypted = Homo.Decipher(k,encrypted);
+
 app.MapPost("/decrypt", async delegate (HttpContext context)
 {
     using (StreamReader reader = new StreamReader(context.Request.Body, Encoding.UTF8))
@@ -73,6 +89,10 @@ app.MapPost("/decrypt", async delegate (HttpContext context)
             case 3:
                 res = PlayfairCipher.Decipher(data.Text, data.Key);
                 break;
+			case 4:
+				// Deserialize then pass
+				// res = HomoCipher.Decipher(data.Text, data.Key);
+				break;
             default:
                 //
                 break;
@@ -87,17 +107,154 @@ app.MapPost("/decrypt", async delegate (HttpContext context)
 app.Run();
 
 
-public class HomosCipher{
-public static string Encipher(string input, int key)
+
+
+class HomoCipher
 {
-    return "ASD";
+    
+    public static string Encipher(string ready,Dictionary<char,string[]> key){
+
+        //helper
+        Dictionary<char,int> count_per_char = new Dictionary<char,int>();
+        foreach(var letter in key)
+        {
+            count_per_char.Add(letter.Key,0);
+        }
+        //
+
+        StringBuilder sb = new StringBuilder();
+        foreach(char letter in ready){
+            sb.Append(key[letter][count_per_char[letter]]);
+            count_per_char[letter] += 1;
+        }
+        return sb.ToString();
+    }
+
+    public static string Decipher(string ready,Dictionary<char,string[]> key){
+            //get first same for every single one
+        var e = key.GetEnumerator();
+        e.MoveNext();
+        var anElement = e.Current;
+        //Get Depth
+        int digits = anElement.Value[0].Length;
+        StringBuilder sb = new StringBuilder();
+        string code = "";
+        for (int i = 0; i < ready.Length; i++)
+        {
+            code += ready[i];
+                if ((i-1) % digits == 0){
+                foreach(var pair in key){
+                    int check = Array.IndexOf(pair.Value,code);
+                    if(check == -1){
+                        continue;
+                    }else{
+                        code = "";
+                    }
+                    sb.Append(pair.Key);
+                }
+            }
+        }
+        return sb.ToString();
+        }
+    public static Dictionary<char,string[]> CreateKey(string ready){
+    //get Frequency
+    Dictionary<char,int> frequency = prCharWithFreq(ready);
+    // Generated Codes
+    List<String> code = new List<String>();
+    // Dynamic
+    int digits = countDigit(ready.Length);
+    string fmt = new String('0', digits);
+
+    // codes from string to 000# format
+    int upto = IntPow(10, digits);
+
+    //Create codes
+    for(int i = 0; i < upto; i++){
+        code.Add(i.ToString(fmt));
+    }
+    // Initialize actual key
+    Dictionary<char,string[]> key = new Dictionary<char,string[]>();
+    // for easier decryption instead of combinatorics
+    // Dictionary<char,int> count_per_char = new Dictionary<char,int>();
+
+    // Get random from codes
+    Random rnd = new Random();
+    foreach(var pair in frequency)
+    {
+    // Creating array for codes per char
+        string[] c_values = new string[pair.Value];
+        for(int i = 0; i < pair.Value; i++){
+            int rand = rnd.Next(0, code.Count());
+            c_values[i] = code[rand];
+            // Remove so its Unique
+            code.RemoveAt(rand);
+        }
+    //add to key
+        key.Add(pair.Key,c_values);
+    //add to countperchar
+    //count_per_char.Add(pair.Key,0);
+    }
+    return key;
+    }
+
+    static int IntPow(int x, int pow)
+    {
+        int ret = 1;
+        while ( pow != 0 )
+        {
+            if ( (pow & 1) == 1 )
+                ret = ret * x;
+            x = x * x;
+            pow >>= 1;
+        }
+        return ret;
+    }
+
+
+    static int countDigit(int n)
+    {
+        int count = 0;
+        while (n != 0) {
+            n = n / 10;
+            ++count;
+        }
+        return count;
+    }
+
+
+    static Dictionary<char,int> prCharWithFreq(string s)
+    {
+    
+    // Store all characters and
+    // their frequencies in dictionary
+    Dictionary<char,int> d = new Dictionary<char,int>();
+    
+    foreach(char i in s)
+    {
+        if(d.ContainsKey(i))
+        {
+            d[i]++;
+        }
+        else
+        {
+            d[i]=1; 
+        }
+    }
+    return d;
+    }
+
+    public static string RemoveSpecialCharacters(string str) {
+    StringBuilder sb = new StringBuilder();
+    foreach (char c in str) {
+        if ((c >= 'a' && c <= 'z')) {
+            sb.Append(c);
+        }
+    }
+    return sb.ToString();
+    }
 }
 
-public static string Decipher(string input, int key)
-{
-    return Encipher(input, 26 - key);
-}
-}
+
 
 public class CaesarCipher{
 static char Caesar(char ch, int key, char d)

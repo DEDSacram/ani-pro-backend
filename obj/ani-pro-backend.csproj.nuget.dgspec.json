@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/samos/Desktop/ani-pro-backend/ani-pro-backend.csproj": {}
+    "/home/sacram/Desktop/Project/ani-pro-backend/ani-pro-backend.csproj": {}
   },
   "projects": {
-    "/home/samos/Desktop/ani-pro-backend/ani-pro-backend.csproj": {
+    "/home/sacram/Desktop/Project/ani-pro-backend/ani-pro-backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/samos/Desktop/ani-pro-backend/ani-pro-backend.csproj",
+        "projectUniqueName": "/home/sacram/Desktop/Project/ani-pro-backend/ani-pro-backend.csproj",
         "projectName": "ani-pro-backend",
-        "projectPath": "/home/samos/Desktop/ani-pro-backend/ani-pro-backend.csproj",
-        "packagesPath": "/home/samos/.nuget/packages/",
-        "outputPath": "/home/samos/Desktop/ani-pro-backend/obj/",
+        "projectPath": "/home/sacram/Desktop/Project/ani-pro-backend/ani-pro-backend.csproj",
+        "packagesPath": "/home/sacram/.nuget/packages/",
+        "outputPath": "/home/sacram/Desktop/Project/ani-pro-backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/samos/.nuget/NuGet/NuGet.Config"
+          "/home/sacram/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net7.0"
@@ -51,7 +51,7 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[7.0.0, 7.0.0]"
+              "version": "[7.0.2, 7.0.2]"
             }
           ],
           "frameworkReferences": {
@@ -62,7 +62,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/7.0.102/RuntimeIdentifierGraph.json"
         }
       }
     }
