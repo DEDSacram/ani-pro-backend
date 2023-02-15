@@ -49,7 +49,8 @@ app.MapPost("/encrypt", async delegate (HttpContext context)
 			case 4:
 				string format = HomoCipher.RemoveSpecialCharacters((data.Text).ToLower());
 				dynamic k = HomoCipher.CreateKey(format);
-				res = HomoCipher.Encipher(format, k);
+                res.TextBefore = format;
+				res.TextNow = HomoCipher.Encipher(format, k);
 				break;
             default:
                 //
