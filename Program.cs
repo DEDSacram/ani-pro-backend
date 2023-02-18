@@ -51,6 +51,7 @@ app.MapPost("/encrypt", async delegate (HttpContext context)
 				dynamic k = HomoCipher.CreateKey(format);
                 res.TextBefore = format;
 				res.TextNow = HomoCipher.Encipher(format, k);
+                res.Display = k;
 				break;
             default:
                 //
