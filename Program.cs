@@ -44,13 +44,14 @@ app.MapPost("/encrypt", async delegate (HttpContext context)
 				res.Display = new char[]{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
                 break;
             case 3:
-                res = PlayfairCipher.Encipher(data.Text, data.Key);
+                dynamic keysquare = PlayfairCipher.GenerateKeySquare(data.Key);
+                res = PlayfairCipher.Encipher(data.Text, keysquare);
+                res.Display = PlayfairCipher.ToJsonSquare(keysquare);;
                 break;
 			case 4:
 				string format = HomoCipher.RemoveSpecialCharacters((data.Text).ToLower());
 				dynamic k = HomoCipher.CreateKey(format);
-                res.TextBefore = format;
-				res.TextNow = HomoCipher.Encipher(format, k);
+				res = HomoCipher.Encipher(format, k);
                 res.Display = k;
 				break;
             default:
@@ -89,11 +90,14 @@ app.MapPost("/decrypt", async delegate (HttpContext context)
 				res.Display = new char[]{'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
                 break;
             case 3:
-                res = PlayfairCipher.Decipher(data.Text, data.Key);
+                dynamic keysquare = PlayfairCipher.GenerateKeySquare(data.Key);
+                res = PlayfairCipher.Encipher(data.Text, keysquare);
+                res.Display = PlayfairCipher.ToJsonSquare(keysquare);;
                 break;
 			case 4:
-				// Deserialize then pass
-				// res = HomoCipher.Decipher(data.Text, data.Key);
+                dynamic k = JsonSerializer.Deserialize<Dictionary<char,string[]>>(data.Key);
+				res = HomoCipher.Decipher(data.Text,k);
+                res.Display = k;
 				break;
             default:
                 //
@@ -114,7 +118,7 @@ app.Run();
 class HomoCipher
 {
     
-    public static string Encipher(string ready,Dictionary<char,string[]> key){
+    public static Postres Encipher(string ready,Dictionary<char,string[]> key){
 
         //helper
         Dictionary<char,int> count_per_char = new Dictionary<char,int>();
@@ -125,21 +129,43 @@ class HomoCipher
         //
 
         StringBuilder sb = new StringBuilder();
+
+        //sort
+	    int[][][][] ani = new int[5][][][];
+	
+
+
+
+        //for animation
+        int col = 0;
         foreach(char letter in ready){
             sb.Append(key[letter][count_per_char[letter]]);
             count_per_char[letter] += 1;
+            //for animation
+
+            // int[] from = new int[2] {(((ch) - d) % 26),0};
+            // int[] to = new int[2]{ ((((ch + key) - d) % 26)),count_per_char[letter]};
+            // ani[i] = new int[][][] {new int[][]{from,to}};
+
         }
-        return sb.ToString();
+
+
+        return new Postres(ready,sb.ToString(),ani);
     }
 
-    public static string Decipher(string ready,Dictionary<char,string[]> key){
+    public static Postres Decipher(string ready,Dictionary<char,string[]> key){
             //get first same for every single one
+
+
         var e = key.GetEnumerator();
         e.MoveNext();
         var anElement = e.Current;
         //Get Depth
         int digits = anElement.Value[0].Length;
         StringBuilder sb = new StringBuilder();
+
+        int[][][][] ani = new int[5][][][];
+
         string code = "";
         for (int i = 0; i < ready.Length; i++)
         {
@@ -156,7 +182,10 @@ class HomoCipher
                 }
             }
         }
-        return sb.ToString();
+
+
+
+        return new Postres(ready,sb.ToString(),ani);
         }
     public static Dictionary<char,string[]> CreateKey(string ready){
     //get Frequency
@@ -318,7 +347,7 @@ private static string RemoveAllDuplicates(string str, List<int> indexes)
 	return retVal;
 }
 
-private static char[,] GenerateKeySquare(string key)
+public static char[,] GenerateKeySquare(string key)
 {
 	char[,] keySquare = new char[5, 5];
 	string defaultKeySquare = "ABCDEFGHIKLMNOPQRSTUVWXYZ";
@@ -338,7 +367,17 @@ private static char[,] GenerateKeySquare(string key)
 	for (int i = 0; i < 25; ++i)
 		keySquare[(i / 5), (i % 5)] = tempKey[i];
 
+
+ 
+
 	return keySquare;
+}
+public static char[][] ToJsonSquare(char[,] keySquare){
+    char[][] square = new char[5][];
+	for(int i = 0; i<keySquare.GetLength(0);i++){
+		square[i] = new char[5] {keySquare[i,0],keySquare[i,1],keySquare[i,2],keySquare[i,3],keySquare[i,4]};
+	}
+    return square;
 }
 private static void GetPosition(ref char[,] keySquare, char ch, ref int row, ref int col)
 {
@@ -398,17 +437,12 @@ private static string AdjustOutput(string input, string output)
 	return retVal.ToString();
 }
 
-private static Postres Cipher(string input, string key, bool encipher)
+private static Postres Cipher(string input, char[,] keySquare, bool encipher)
 {
 	string retVal = string.Empty;
-	char[,] keySquare = GenerateKeySquare(key);
 	string tempInput = RemoveOtherChars(input);
 	int[][][][] ani = new int[(tempInput.Length % 2 == 0) ? tempInput.Length/2 : (tempInput.Length+1)/2][][][];
-	char[][] square = new char[5][];
-	for(int i = 0; i<keySquare.GetLength(0);i++){
-		square[i] = new char[5] {keySquare[i,0],keySquare[i,1],keySquare[i,2],keySquare[i,3],keySquare[i,4]};
-	}
-
+    
 	int e = encipher ? 1 : -1;
 	if ((tempInput.Length % 2) != 0)
 		tempInput += "X";
@@ -480,16 +514,15 @@ private static Postres Cipher(string input, string key, bool encipher)
 	retVal = AdjustOutput(input, retVal);
 
 	Postres res = new Postres(tempInput,retVal,ani);
-	res.Display = square;
 	return res;
 }
 
-public static Postres Encipher(string input, string key)
+public static Postres Encipher(string input, char[,] key)
 {
 	return Cipher(input, key, true);
 }
 
-public static Postres Decipher(string input, string key)
+public static Postres Decipher(string input, char[,] key)
 {
 	return Cipher(input, key, false);
 }
