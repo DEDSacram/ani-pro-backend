@@ -131,22 +131,34 @@ class HomoCipher
         StringBuilder sb = new StringBuilder();
 
         //sort
-	    int[][][][] ani = new int[5][][][];
+	    int[][][][] ani = new int[ready.Length][][][];
 	
 
 
 
         //for animation
-        int col = 0;
+        int step = 0;
         foreach(char letter in ready){
             sb.Append(key[letter][count_per_char[letter]]);
-            count_per_char[letter] += 1;
+        
             //for animation
+            int col = 0;
+            foreach(var lkey in key){
+                if(lkey.Key == letter){
+                    break;
+                }
+                col++;
+            }
+            int row = count_per_char[letter];
 
-            // int[] from = new int[2] {(((ch) - d) % 26),0};
-            // int[] to = new int[2]{ ((((ch + key) - d) % 26)),count_per_char[letter]};
-            // ani[i] = new int[][][] {new int[][]{from,to}};
+            count_per_char[letter] += 1;
+            
 
+
+            int[] from = new int[2] {col,0};
+            int[] to = new int[2]{col,count_per_char[letter]};
+            ani[step] = new int[][][] {new int[][]{from,to}};
+            step++;
         }
 
 
