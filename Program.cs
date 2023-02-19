@@ -151,13 +151,15 @@ class HomoCipher
             }
             int row = count_per_char[letter];
 
-            count_per_char[letter] += 1;
+          
             
 
 
             int[] from = new int[2] {col,0};
-            int[] to = new int[2]{col,count_per_char[letter]};
+                                            // skip first row
+            int[] to = new int[2]{col,count_per_char[letter]+1};
             ani[step] = new int[][][] {new int[][]{from,to}};
+            count_per_char[letter] += 1;
             step++;
         }
 
@@ -176,20 +178,29 @@ class HomoCipher
         int digits = anElement.Value[0].Length;
         StringBuilder sb = new StringBuilder();
 
-        int[][][][] ani = new int[5][][][];
+        int[][][][] ani = new int[ready.Length/digits][][][];
 
         string code = "";
         for (int i = 0; i < ready.Length; i++)
         {
             code += ready[i];
-                if ((i-1) % digits == 0){
+                if (i % digits == 0){
+                //ani
+                int step = (i) / digits;
+                int col = 0;
+                //
                 foreach(var pair in key){
                     int check = Array.IndexOf(pair.Value,code);
                     if(check == -1){
+                        col++;
                         continue;
                     }else{
                         code = "";
                     }
+                    //
+                    int[] from = new int[2] {col,check+1};
+                    int[] to = new int[2]{col,0};
+                    ani[step] = new int[][][] {new int[][]{from,to}};
                     sb.Append(pair.Key);
                 }
             }
