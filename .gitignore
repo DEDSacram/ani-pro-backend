@@ -1,2 +1,14 @@
 bin/Debug/net7.0/ani-pro-backend.dll
 bin/Debug/net7.0/ani-pro-backend.pdb
+bin/Debug/net7.0/ani-pro-backend
+bin/Debug/net7.0/ani-pro-backend
+bin/Debug/net7.0/ani-pro-backend.dll
+.gitignore
+obj/ani-pro-backend.csproj.nuget.dgspec.json
+obj/project.assets.json
+obj/project.nuget.cache
+obj/Debug/net7.0/ani-pro-backend.csproj.AssemblyReference.cache
+obj/Debug/net7.0/ani-pro-backend.csproj.CoreCompileInputs.cache
+obj/Debug/net7.0/ani-pro-backend.dll
+.gitignore
+obj/Debug/net7.0/apphost
