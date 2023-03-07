@@ -169,8 +169,6 @@ class HomoCipher
 
     public static Postres Decipher(string ready,Dictionary<char,string[]> key){
             //get first same for every single one
-
-
         var e = key.GetEnumerator();
         e.MoveNext();
         var anElement = e.Current;
@@ -184,7 +182,7 @@ class HomoCipher
         for (int i = 0; i < ready.Length; i++)
         {
             code += ready[i];
-                if (i % digits == 0){
+                if ((i+1) % digits == 0){
                 //ani
                 int step = (i) / digits;
                 int col = 0;
