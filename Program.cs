@@ -182,6 +182,7 @@ class HomoCipher
         for (int i = 0; i < ready.Length; i++)
         {
             code += ready[i];
+                // not index
                 if ((i+1) % digits == 0){
                 //ani
                 int step = (i) / digits;
